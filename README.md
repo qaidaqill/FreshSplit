@@ -26,6 +26,7 @@ Canadian households throw away about **2.3 million tonnes** of edible food a yea
 | Receipt reading | [Tesseract.js](https://github.com/naptha/tesseract.js) reads the photo **inside the browser**, so receipts never leave your phone. |
 | Expiry dates | A table of typical shelf lives (milk 7 days, chicken 2 days…). Users can edit every date. |
 | CO₂ estimate | 6.9 Mt CO₂ ÷ 2.3 Mt food ≈ **3 kg CO₂ per kg of food** rescued. |
+| Food photos | Built-in photos for common foods; others are matched to a free photo from Wikipedia (Wikimedia Commons), no API key needed. |
 | Data | Saved in the browser on each device (localStorage). |
 | Tech | Plain HTML, CSS and JavaScript in one file, hosted free on GitHub Pages. |
 
