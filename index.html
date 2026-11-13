@@ -627,7 +627,7 @@ function addPanel(){
         <button class="btn" data-act="rcSample">Use sample text</button>
         <button class="btn ghost" data-act="mode" data-mode="">Cancel</button>
       </div>
-      <div class="hint">Photos are read right here in your browser, so your receipt isn't uploaded anywhere. FreshSplit then matches each line to a food and estimates its use-by date from typical shelf life.</div>
+      <div class="hint">Photos are read right here in your browser, so your receipt isn't uploaded anywhere (reader v3). FreshSplit then matches each line to a food and estimates its use-by date from typical shelf life.</div>
       ${res}
     </div>`;
   }
@@ -721,20 +721,47 @@ function loadTesseract(){
   return tessLoading;
 }
 // Shrink big phone photos and boost contrast so text is easier to read
-// Finds the receipt paper in the photo (the biggest bright, colourless area) so the
-// countertop or table around it doesn't confuse the reader. Returns {x,y,w,h} in image pixels.
+// Finds the receipt paper in the photo so the table or countertop around it doesn't confuse the
+// reader. Works in warm, cool, dim or bright light: it first balances the colours, then picks the
+// biggest bright, colourless area. Returns {x,y,w,h} in image pixels, or null to use the whole photo.
 function findPaper(img){
   try{
-    const W=img.naturalWidth, H=img.naturalHeight, sw=160, sh=Math.max(1,Math.round(H*sw/W));
+    const W=img.naturalWidth, H=img.naturalHeight, sw=160, sh=Math.max(1,Math.round(H*sw/W)), N=sw*sh;
     const c=document.createElement("canvas"); c.width=sw; c.height=sh;
     const x=c.getContext("2d"); x.drawImage(img,0,0,sw,sh);
-    const p=x.getImageData(0,0,sw,sh).data, mask=new Uint8Array(sw*sh);
-    for(let i=0;i<sw*sh;i++){
-      const r=p[i*4], g=p[i*4+1], b=p[i*4+2], mx=Math.max(r,g,b), mn=Math.min(r,g,b);
-      if((r+g+b)/3>165 && mx-mn<38) mask[i]=1;
+    const p=x.getImageData(0,0,sw,sh).data;
+    // 1. White balance: each colour channel's brightest 5% becomes white.
+    const hi=[1,1,1];
+    for(let ch=0;ch<3;ch++){
+      const h=new Uint32Array(256); for(let i=0;i<N;i++) h[p[i*4+ch]]++;
+      let acc=0; for(let v=0;v<256;v++){ acc+=h[v]; if(acc>=N*0.95){ hi[ch]=Math.max(1,v); break; } }
     }
-    const seen=new Uint8Array(sw*sh); let best=null;
-    for(let s=0;s<sw*sh;s++){
+    const gray=new Float32Array(N), chroma=new Float32Array(N), gh=new Uint32Array(256);
+    for(let i=0;i<N;i++){
+      const r=Math.min(255,p[i*4]*255/hi[0]), g=Math.min(255,p[i*4+1]*255/hi[1]), b=Math.min(255,p[i*4+2]*255/hi[2]);
+      const mx=Math.max(r,g,b), mn=Math.min(r,g,b);
+      gray[i]=(r+g+b)/3; chroma[i]=(mx-mn)/Math.max(mx,1); gh[Math.min(255,Math.round(gray[i]))]++;
+    }
+    // 2. Pick the brightness that best separates paper from background (Otsu's method).
+    let total=0; for(let v=0;v<256;v++) total+=v*gh[v];
+    let wb=0, sb=0, bestVar=0, t=128;
+    for(let v=0;v<256;v++){
+      wb+=gh[v]; if(!wb) continue;
+      const wf=N-wb; if(!wf) break;
+      sb+=v*gh[v];
+      const mb=sb/wb, mf=(total-sb)/wf, s=wb*wf*(mb-mf)*(mb-mf);
+      if(s>bestVar){ bestVar=s; t=v; }
+    }
+    t=Math.max(90,t);
+    const raw=new Uint8Array(N); for(let i=0;i<N;i++) if(gray[i]>t && chroma[i]<0.22) raw[i]=1;
+    // 3. Shave one pixel off every edge, so specks in the background don't join onto the receipt.
+    const mask=new Uint8Array(N);
+    for(let yy=1;yy<sh-1;yy++) for(let xx=1;xx<sw-1;xx++){
+      const i=yy*sw+xx; if(raw[i]&&raw[i-1]&&raw[i+1]&&raw[i-sw]&&raw[i+sw]) mask[i]=1;
+    }
+    // 4. The biggest connected bright area is the receipt.
+    const seen=new Uint8Array(N); let best=null;
+    for(let s=0;s<N;s++){
       if(!mask[s]||seen[s]) continue;
       const q=[s]; seen[s]=1; let n=0, x0=sw, y0=sh, x1=0, y1=0;
       while(q.length){
@@ -745,11 +772,11 @@ function findPaper(img){
       }
       if(!best||n>best.n) best={n,x0,y0,x1,y1};
     }
-    if(!best || best.n<sw*sh*0.06) return null;           // no clear paper: use the whole photo
+    if(!best || best.n<N*0.04) return null;                // no clear paper: use the whole photo
     const k=W/sw, pad=3;
     const bx=Math.max(0,(best.x0-pad)*k), by=Math.max(0,(best.y0-pad)*k);
     const bw=Math.min(W,(best.x1+1+pad)*k)-bx, bh=Math.min(H,(best.y1+1+pad)*k)-by;
-    if(bw*bh>W*H*0.92) return null;                        // paper fills the photo already
+    if(bw*bh>W*H*0.92) return null;                         // paper already fills the photo
     return {x:bx,y:by,w:bw,h:bh};
   }catch(e){ return null; }
 }
@@ -799,7 +826,7 @@ async function scanPhoto(src, revoke){
     UI.parsed=parseReceipt(UI.receipt);
     UI.ocr={status:"done",thumb};
     render();
-    toast(UI.parsed.found.length?`Found ${UI.parsed.found.length} grocery items. Check them below.`:"No grocery items found. Check the text and try again.");
+    toast(UI.parsed.found.length>=2?`Found ${UI.parsed.found.length} grocery items. Check them below.`:"Only a little was readable. Try cropping the photo to just the receipt, in good light.");
   }catch(err){
     console.error(err);
     UI.ocr={status:"error"}; render();
