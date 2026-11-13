@@ -330,14 +330,14 @@ const CO2_PER_KG = 3; // 2.3 Mt household food waste ≈ 6.9 Mt CO2 (Love Food H
 
 // How to spot each food on a receipt, including common store abbreviations.
 const RX = {
-  cheese:/chees|\bched|\bchs\b|mozz|parm/, yogurt:/yog|\bygt\b/,
-  milk:/milk|\bmlk\b|\bhomo\b|\bskim\b|\b[12]\s?%/, cream:/cream|\bcrm\b/, butter:/butter|\bbtr\b/, eggs:/egg/,
-  chicken:/chick|\bchkn|\bchk\b/, beef:/beef|\bgrnd\s?bf|\bgr\s?bf/, salmon:/salmon/,
+  cheese:/chees|\bched|\bchs[e]?\b|mozz|parm|cott\b|cottage/, yogurt:/yog|\bygt\b/,
+  milk:/milk|\bmlk\b|\bhomo\b|\bskim\b|\b[12]\s?%/, cream:/cream|\bcrm\b/, butter:/butter|\bbtr\b|unsalted|\bsalted\b/, eggs:/egg/,
+  chicken:/chick|\bchkn|\bchk\b|breasts?\b|\bb\/s\b|thighs?\b|drumstick|\bwings?\b/, beef:/beef|\bgrnd\s?bf|\bgr\s?bf/, salmon:/salmon/,
   spinach:/spinach|\bspnch|\bspin\b/, lettuce:/lettuce|romaine|\blett\b|iceberg/, tomato:/tomato|\btoms?\b|\broma\b/,
   pepper:/pepper|\bppr\b/, broccoli:/brocc/, mushroom:/mushr|\bmush\b/, cucumber:/cucumb|\bcuke/, carrot:/carrot|\bcarr\b/,
   strawberries:/strawb|\bstrwb|berries/, avocado:/avocad|\bavo\b/, banana:/banan|\bbnna/, apple:/apple/,
   potato:/potat/, onion:/onion/, garlic:/garlic/,
-  bread:/bread|\bbrd\b|\bloaf|bagel|\bbuns?\b/, tortilla:/tortil|\bwraps?\b/,
+  bread:/bread|\bbrd\b|\bloaf|bagel|\bbuns?\b|\brye\b|sourdough|baguette/, tortilla:/tortil|\bwraps?\b/,
   pasta:/pasta|spaghet|penne|macaroni|fusilli|linguin/, rice:/\brice\b/, oats:/\boats?\b|oatmeal/, beans:/\bbeans?\b/
 };
 function findFood(text){
@@ -662,26 +662,30 @@ GST 5%                   0.20
 TOTAL                   45.26
 DEBIT                   45.26`;
 // Lines that are never groceries (totals, tax, payment, store info) and common non-food buys.
-const SKIP_LINE=/sub\s?total|total|\btax\b|\bgst\b|\bpst\b|\bhst\b|change|cash|visa|master\s?card|amex|debit|credit|balance|discount|savings|you saved|tender|approved|auth|card\s?#|points|loyalty|thank|receipt|phone|\btel\b|www\.|\.com|^\d{1,2}\/\d{1,2}|#\d+/i;
-const NON_FOOD=/soap|detergent|paper|towel|tissue|toilet|foil|bleach|cleaner|sponge|shampoo|toothpaste|batter(y|ies)|\bbags?\b|bag fee|deposit|\bdep\b|eco fee|env fee|lottery/i;
+const SKIP_LINE=/sub\s?total|total|date|time|member|invoice|reference|purchase|acct|transaction|amount|cashier|register|terminal|items sold|\btax\b|\bgst\b|\bpst\b|\bhst\b|change|cash|visa|master\s?card|amex|debit|credit|balance|discount|savings|you saved|tender|approved|auth|card\s?#|points|loyalty|thank|receipt|phone|\btel\b|www\.|\.com|^\d{1,2}\/\d{1,2}|#\d+/i;
+const NON_FOOD=/soap|detergent|paper|towel|tissue|toilet|foil|bleach|clean|sponge|shampoo|toothpaste|batter(y|ies)|\bbags?\b|bag fee|deposit|\bdep\b|eco fee|env fee|enviro|lottery|tide|cascade|cloth|boxer|sock|essnce|essence|perfume|cologne|lotion|diaper|wipes|kleenex|charmin|bounty|candle|vitamin|multiple|\/\d/i;
 function parseReceipt(text){
   const found=[], unknown=[];
   text.split(/\r?\n/).forEach(raw=>{
-    // Tidy common reading mistakes: stray tax letters, "$", "4,99", "3. 12", letter O instead of zero.
-    const line=raw.replace(/[|]/g," ")
-      .replace(/\s+[A-Z*]{1,3}\s*$/i,"")
-      .replace(/(\d)\s*[.,]\s*(\d{2})\s*$/,"$1.$2")
-      .replace(/[oO](?=\d?\s*$)/,"0")
-      .trim();
+    const line=raw.replace(/[|\\]/g," ").replace(/\s+/g," ").trim();
     if(!line || SKIP_LINE.test(line)) return;
-    const m=line.match(/^(.+?)\s+\$?\s?(\d+\.\d{2})$/);
-    if(!m) return;
-    const name=m[1].replace(/^\d{3,}\s+/,"").replace(/^\d+\s*@\s*/,"").replace(/^\d+\s+(?=[a-z])/i,"").replace(/[^a-z0-9%&.\- ]/gi," ").replace(/\s+/g," ").trim();
-    const price=parseFloat(m[2]);
-    if(name.length<3 || !/[a-z]{2}/i.test(name) || !(price>0) || NON_FOOD.test(name)) return;
+    // "name ... price", allowing reading slips like 4,99 / 3. 12 / 9:79 / 3.5O and up to 6 stray
+    // characters after the price (tax codes like G or H, pen marks).
+    const m=line.replace(/(\d[.,:]\s?\d)[oO]/g,"$10").match(/^(.*?[a-z]{2}.*?)\s+\$?\s?(\d{1,4})\s?[.,:]\s?(\d{2})(?!\d)(.{0,6})$/i);
+    let name, price=null;
+    if(m){
+      if(/-/.test(m[4])) return;                       // discounts and coupons ("6.00-G")
+      name=m[1]; price=parseFloat(m[2]+"."+m[3]);
+    } else if(/^\W*\d{3,}\s+[a-z]/i.test(line)){
+      name=line.replace(/\s+\S*\d\S*\s*$/,"");          // item line whose price couldn't be read
+    } else return;
+    name=name.replace(/^[^a-z0-9]+/i,"").replace(/^\d{3,}\s+/,"").replace(/^\d+\s*@\s*/,"").replace(/^\d+\s+(?=[a-z])/i,"")
+      .replace(/[^a-z0-9%&.\- ]/gi," ").replace(/\s+/g," ").trim();
+    if(name.length<3 || !/[a-z]{2}/i.test(name) || NON_FOOD.test(name)) return;
+    if(price!==null && !(price>0)) return;
     const f=findFood(name);
     if(f) found.push({f, line:raw.trim(), price, exp:addDays(f.d), frozen:false});
-    else unknown.push(name);
+    else if(price!==null) unknown.push(name);
   });
   return {found, unknown};
 }
@@ -701,16 +705,50 @@ function loadTesseract(){
   return tessLoading;
 }
 // Shrink big phone photos and boost contrast so text is easier to read
+// Finds the receipt paper in the photo (the biggest bright, colourless area) so the
+// countertop or table around it doesn't confuse the reader. Returns {x,y,w,h} in image pixels.
+function findPaper(img){
+  try{
+    const W=img.naturalWidth, H=img.naturalHeight, sw=160, sh=Math.max(1,Math.round(H*sw/W));
+    const c=document.createElement("canvas"); c.width=sw; c.height=sh;
+    const x=c.getContext("2d"); x.drawImage(img,0,0,sw,sh);
+    const p=x.getImageData(0,0,sw,sh).data, mask=new Uint8Array(sw*sh);
+    for(let i=0;i<sw*sh;i++){
+      const r=p[i*4], g=p[i*4+1], b=p[i*4+2], mx=Math.max(r,g,b), mn=Math.min(r,g,b);
+      if((r+g+b)/3>165 && mx-mn<38) mask[i]=1;
+    }
+    const seen=new Uint8Array(sw*sh); let best=null;
+    for(let s=0;s<sw*sh;s++){
+      if(!mask[s]||seen[s]) continue;
+      const q=[s]; seen[s]=1; let n=0, x0=sw, y0=sh, x1=0, y1=0;
+      while(q.length){
+        const v=q.pop(), cx=v%sw, cy=(v/sw)|0; n++;
+        if(cx<x0)x0=cx; if(cx>x1)x1=cx; if(cy<y0)y0=cy; if(cy>y1)y1=cy;
+        const nb=[cx>0?v-1:-1, cx<sw-1?v+1:-1, cy>0?v-sw:-1, cy<sh-1?v+sw:-1];
+        for(const u of nb){ if(u>=0 && mask[u] && !seen[u]){ seen[u]=1; q.push(u); } }
+      }
+      if(!best||n>best.n) best={n,x0,y0,x1,y1};
+    }
+    if(!best || best.n<sw*sh*0.06) return null;           // no clear paper: use the whole photo
+    const k=W/sw, pad=3;
+    const bx=Math.max(0,(best.x0-pad)*k), by=Math.max(0,(best.y0-pad)*k);
+    const bw=Math.min(W,(best.x1+1+pad)*k)-bx, bh=Math.min(H,(best.y1+1+pad)*k)-by;
+    if(bw*bh>W*H*0.92) return null;                        // paper fills the photo already
+    return {x:bx,y:by,w:bw,h:bh};
+  }catch(e){ return null; }
+}
 function prepImage(src){
   return new Promise((res,rej)=>{
     const img=new Image();
     img.onload=()=>{
-      const sc=Math.min(1,1800/Math.max(img.naturalWidth,img.naturalHeight));
-      const w=Math.round(img.naturalWidth*sc), h=Math.round(img.naturalHeight*sc);
+      const box=findPaper(img) || {x:0,y:0,w:img.naturalWidth,h:img.naturalHeight};
+      // Receipt text needs to be big enough: aim for about 1600px wide, never more than 2000px tall (bigger makes the reader split names from prices).
+      const sc=Math.min(1600/box.w, 2000/box.h, box.w<1600?3:1);
+      const w=Math.round(box.w*sc), h=Math.round(box.h*sc);
       const c=document.createElement("canvas"); c.width=w; c.height=h;
-      const x=c.getContext("2d"); x.fillStyle="#fff"; x.fillRect(0,0,w,h); x.drawImage(img,0,0,w,h);
+      const x=c.getContext("2d"); x.fillStyle="#fff"; x.fillRect(0,0,w,h); x.drawImage(img,box.x,box.y,box.w,box.h,0,0,w,h);
       const d=x.getImageData(0,0,w,h), p=d.data;
-      for(let i=0;i<p.length;i+=4){ let g=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2]; g=(g-128)*1.4+128; g=g<0?0:g>255?255:g; p[i]=p[i+1]=p[i+2]=g; }
+      for(let i=0;i<p.length;i+=4){ let g=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2]; g=(g-128)*1.5+128; g=g<0?0:g>255?255:g; p[i]=p[i+1]=p[i+2]=g; }
       x.putImageData(d,0,0);
       res({canvas:c, thumb:c.toDataURL("image/jpeg",0.6)});
     };
@@ -737,6 +775,8 @@ async function scanPhoto(src, revoke){
     const worker=await Tesseract.createWorker("eng",1,{logger:m=>{
       if(m.status==="recognizing text") setOcr(m.progress,"Reading your receipt…");
     }});
+    // Read the receipt as one column of lines, keeping each item name next to its price.
+    try{ await worker.setParameters({tessedit_pageseg_mode:"4", preserve_interword_spaces:"1"}); }catch(e){}
     const {data:{text}}=await worker.recognize(canvas);
     await worker.terminate();
     UI.receipt=(text||"").trim();
