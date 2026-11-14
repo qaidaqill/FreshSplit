@@ -1,0 +1,375 @@
+[
+  {
+    "k": "milk",
+    "n": "Milk (2 L)",
+    "e": "🥛",
+    "d": 7,
+    "kg": 2.0,
+    "p": 5.49,
+    "c": "dairy",
+    "a": [
+      "milk"
+    ]
+  },
+  {
+    "k": "eggs",
+    "n": "Eggs (12)",
+    "e": "🥚",
+    "d": 21,
+    "kg": 0.7,
+    "p": 4.29,
+    "c": "dairy",
+    "a": [
+      "egg"
+    ]
+  },
+  {
+    "k": "cheese",
+    "n": "Cheddar cheese",
+    "e": "🧀",
+    "d": 28,
+    "kg": 0.4,
+    "p": 7.99,
+    "c": "dairy",
+    "a": [
+      "cheese",
+      "ched",
+      "mozz"
+    ]
+  },
+  {
+    "k": "yogurt",
+    "n": "Yogurt",
+    "e": "🥣",
+    "d": 14,
+    "kg": 0.65,
+    "p": 4.79,
+    "c": "dairy",
+    "a": [
+      "yogurt",
+      "yog"
+    ]
+  },
+  {
+    "k": "butter",
+    "n": "Butter",
+    "e": "🧈",
+    "d": 60,
+    "kg": 0.45,
+    "p": 6.49,
+    "c": "dairy",
+    "a": [
+      "butter"
+    ]
+  },
+  {
+    "k": "cream",
+    "n": "Cooking cream",
+    "e": "🥛",
+    "d": 10,
+    "kg": 0.5,
+    "p": 3.29,
+    "c": "dairy",
+    "a": [
+      "cream"
+    ]
+  },
+  {
+    "k": "bread",
+    "n": "Bread",
+    "e": "🍞",
+    "d": 5,
+    "kg": 0.6,
+    "p": 3.49,
+    "c": "bakery",
+    "a": [
+      "bread",
+      "loaf"
+    ]
+  },
+  {
+    "k": "tortilla",
+    "n": "Tortillas",
+    "e": "🫓",
+    "d": 14,
+    "kg": 0.5,
+    "p": 3.99,
+    "c": "bakery",
+    "a": [
+      "tortilla",
+      "wrap"
+    ]
+  },
+  {
+    "k": "spinach",
+    "n": "Baby spinach",
+    "e": "🥬",
+    "d": 5,
+    "kg": 0.3,
+    "p": 4.99,
+    "c": "leafy",
+    "a": [
+      "spinach"
+    ]
+  },
+  {
+    "k": "lettuce",
+    "n": "Lettuce",
+    "e": "🥬",
+    "d": 7,
+    "kg": 0.5,
+    "p": 2.99,
+    "c": "leafy",
+    "a": [
+      "lettuce",
+      "romaine"
+    ]
+  },
+  {
+    "k": "tomato",
+    "n": "Tomatoes",
+    "e": "🍅",
+    "d": 7,
+    "kg": 0.5,
+    "p": 3.12,
+    "c": "produce",
+    "a": [
+      "tomato",
+      "roma"
+    ]
+  },
+  {
+    "k": "pepper",
+    "n": "Bell peppers",
+    "e": "🫑",
+    "d": 7,
+    "kg": 0.4,
+    "p": 3.49,
+    "c": "produce",
+    "a": [
+      "pepper"
+    ]
+  },
+  {
+    "k": "broccoli",
+    "n": "Broccoli",
+    "e": "🥦",
+    "d": 5,
+    "kg": 0.5,
+    "p": 2.99,
+    "c": "produce",
+    "a": [
+      "broccoli"
+    ]
+  },
+  {
+    "k": "mushroom",
+    "n": "Mushrooms",
+    "e": "🍄",
+    "d": 5,
+    "kg": 0.23,
+    "p": 2.99,
+    "c": "produce",
+    "a": [
+      "mushroom"
+    ]
+  },
+  {
+    "k": "cucumber",
+    "n": "Cucumber",
+    "e": "🥒",
+    "d": 7,
+    "kg": 0.4,
+    "p": 1.29,
+    "c": "produce",
+    "a": [
+      "cucumber",
+      "cuke"
+    ]
+  },
+  {
+    "k": "carrot",
+    "n": "Carrots",
+    "e": "🥕",
+    "d": 21,
+    "kg": 1.0,
+    "p": 2.49,
+    "c": "produce",
+    "a": [
+      "carrot"
+    ]
+  },
+  {
+    "k": "potato",
+    "n": "Potatoes",
+    "e": "🥔",
+    "d": 30,
+    "kg": 2.0,
+    "p": 4.99,
+    "c": "produce",
+    "a": [
+      "potato"
+    ]
+  },
+  {
+    "k": "onion",
+    "n": "Onions",
+    "e": "🧅",
+    "d": 30,
+    "kg": 1.0,
+    "p": 2.99,
+    "c": "produce",
+    "a": [
+      "onion"
+    ]
+  },
+  {
+    "k": "garlic",
+    "n": "Garlic",
+    "e": "🧄",
+    "d": 60,
+    "kg": 0.1,
+    "p": 0.99,
+    "c": "produce",
+    "a": [
+      "garlic"
+    ]
+  },
+  {
+    "k": "banana",
+    "n": "Bananas",
+    "e": "🍌",
+    "d": 5,
+    "kg": 1.0,
+    "p": 1.83,
+    "c": "fruit",
+    "a": [
+      "banana"
+    ]
+  },
+  {
+    "k": "apple",
+    "n": "Apples",
+    "e": "🍎",
+    "d": 30,
+    "kg": 1.0,
+    "p": 4.49,
+    "c": "fruit",
+    "a": [
+      "apple"
+    ]
+  },
+  {
+    "k": "strawberries",
+    "n": "Strawberries",
+    "e": "🍓",
+    "d": 4,
+    "kg": 0.45,
+    "p": 4.99,
+    "c": "fruit",
+    "a": [
+      "strawberr",
+      "berries"
+    ]
+  },
+  {
+    "k": "avocado",
+    "n": "Avocados",
+    "e": "🥑",
+    "d": 4,
+    "kg": 0.4,
+    "p": 3.99,
+    "c": "fruit",
+    "a": [
+      "avocado"
+    ]
+  },
+  {
+    "k": "chicken",
+    "n": "Chicken breast",
+    "e": "🍗",
+    "d": 2,
+    "kg": 1.0,
+    "p": 12.87,
+    "c": "meat",
+    "a": [
+      "chicken",
+      "chkn"
+    ]
+  },
+  {
+    "k": "beef",
+    "n": "Ground beef",
+    "e": "🥩",
+    "d": 2,
+    "kg": 0.45,
+    "p": 7.49,
+    "c": "meat",
+    "a": [
+      "beef"
+    ]
+  },
+  {
+    "k": "salmon",
+    "n": "Salmon fillet",
+    "e": "🐟",
+    "d": 2,
+    "kg": 0.4,
+    "p": 11.99,
+    "c": "meat",
+    "a": [
+      "salmon"
+    ]
+  },
+  {
+    "k": "rice",
+    "n": "Rice",
+    "e": "🍚",
+    "d": 365,
+    "kg": 2.0,
+    "p": 6.99,
+    "c": "pantry",
+    "a": [
+      "rice"
+    ]
+  },
+  {
+    "k": "pasta",
+    "n": "Pasta",
+    "e": "🍝",
+    "d": 365,
+    "kg": 0.9,
+    "p": 2.49,
+    "c": "pantry",
+    "a": [
+      "pasta",
+      "spaghetti",
+      "penne"
+    ]
+  },
+  {
+    "k": "oats",
+    "n": "Rolled oats",
+    "e": "🌾",
+    "d": 365,
+    "kg": 1.0,
+    "p": 4.49,
+    "c": "pantry",
+    "a": [
+      "oats",
+      "oatmeal"
+    ]
+  },
+  {
+    "k": "beans",
+    "n": "Canned beans",
+    "e": "🥫",
+    "d": 730,
+    "kg": 0.4,
+    "p": 1.49,
+    "c": "pantry",
+    "a": [
+      "bean"
+    ]
+  }
+]
