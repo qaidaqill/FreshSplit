@@ -1,0 +1,6 @@
+export const $ = (selector, root = document) => root.querySelector(selector);
+export const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+export function setHTML(selector, html, root = document) {
+  const element = $(selector, root);
+  if (element) element.innerHTML = html;
+}
