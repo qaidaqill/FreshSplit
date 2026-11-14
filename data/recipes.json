@@ -1,0 +1,191 @@
+[
+  {
+    "n": "Creamy chicken & spinach pasta",
+    "t": 25,
+    "veg": false,
+    "ing": [
+      "chicken",
+      "spinach",
+      "pasta",
+      "milk"
+    ]
+  },
+  {
+    "n": "Avocado & egg toast",
+    "t": 15,
+    "veg": true,
+    "ing": [
+      "bread",
+      "avocado",
+      "eggs",
+      "spinach"
+    ]
+  },
+  {
+    "n": "Spinach & tomato omelette",
+    "t": 15,
+    "veg": true,
+    "ing": [
+      "eggs",
+      "spinach",
+      "tomato",
+      "cheese",
+      "onion"
+    ]
+  },
+  {
+    "n": "Chicken & pepper stir-fry",
+    "t": 25,
+    "veg": false,
+    "ing": [
+      "chicken",
+      "pepper",
+      "broccoli",
+      "garlic",
+      "rice",
+      "onion"
+    ]
+  },
+  {
+    "n": "Creamy spinach pasta",
+    "t": 20,
+    "veg": true,
+    "ing": [
+      "pasta",
+      "spinach",
+      "garlic",
+      "cream",
+      "cheese"
+    ]
+  },
+  {
+    "n": "Banana oat pancakes",
+    "t": 15,
+    "veg": true,
+    "ing": [
+      "banana",
+      "eggs",
+      "oats",
+      "milk"
+    ]
+  },
+  {
+    "n": "Tomato & bean soup",
+    "t": 30,
+    "veg": true,
+    "ing": [
+      "tomato",
+      "onion",
+      "garlic",
+      "beans",
+      "carrot"
+    ]
+  },
+  {
+    "n": "Grilled cheese & tomato",
+    "t": 10,
+    "veg": true,
+    "ing": [
+      "bread",
+      "cheese",
+      "tomato",
+      "butter"
+    ]
+  },
+  {
+    "n": "French toast",
+    "t": 15,
+    "veg": true,
+    "ing": [
+      "bread",
+      "eggs",
+      "milk",
+      "butter"
+    ]
+  },
+  {
+    "n": "Chicken fried rice",
+    "t": 20,
+    "veg": false,
+    "ing": [
+      "rice",
+      "eggs",
+      "chicken",
+      "carrot",
+      "onion",
+      "garlic"
+    ]
+  },
+  {
+    "n": "Veggie bean quesadillas",
+    "t": 15,
+    "veg": true,
+    "ing": [
+      "tortilla",
+      "cheese",
+      "pepper",
+      "onion",
+      "beans"
+    ]
+  },
+  {
+    "n": "Yogurt fruit bowl",
+    "t": 5,
+    "veg": true,
+    "ing": [
+      "yogurt",
+      "banana",
+      "strawberries",
+      "oats"
+    ]
+  },
+  {
+    "n": "Beef tacos",
+    "t": 25,
+    "veg": false,
+    "ing": [
+      "beef",
+      "tortilla",
+      "tomato",
+      "lettuce",
+      "cheese",
+      "onion"
+    ]
+  },
+  {
+    "n": "Roasted vegetable tray",
+    "t": 35,
+    "veg": true,
+    "ing": [
+      "potato",
+      "carrot",
+      "pepper",
+      "onion",
+      "garlic"
+    ]
+  },
+  {
+    "n": "Salmon rice bowl",
+    "t": 20,
+    "veg": false,
+    "ing": [
+      "salmon",
+      "rice",
+      "cucumber",
+      "avocado"
+    ]
+  },
+  {
+    "n": "Mushroom risotto",
+    "t": 35,
+    "veg": true,
+    "ing": [
+      "rice",
+      "mushroom",
+      "onion",
+      "garlic",
+      "cheese",
+      "butter"
+    ]
+  }
+]
